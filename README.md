@@ -4,8 +4,7 @@
 
 Additional Figures are in Figures/ folder (fully updated to reflect most recent model).
 
-Code is in AstroMCAD.ipynb. The final model object is Trained_Model. This file is a pickle dump of a TrainedModel object, which is defined in the code, and has pretrained classification and anomaly scores for the training, validation, and testing dataset.
-Email me if you'd like to see an updated version of the code.
+Code for training and plot generation in AstroMCAD.ipynb.
 
 If you have any questions, shoot me an email at rithwikca2020@gmail.com.
 
