@@ -1,6 +1,5 @@
 # Multi-Class Anomaly Detection for Astronomical Transients
 
-<<<<<<< HEAD
 Paper Link: https://arxiv.org/abs/2403.14742
 243rd AAS Meeting iPoster: https://aas243-aas.ipostersessions.com/default.aspx?s=16-F9-A7-80-27-2E-87-DF-6A-01-E4-07-E4-A2-07-2C&guestview=true
 
@@ -10,16 +9,6 @@ Additional Figures from the paper are in the Figures/ folder (fully updated to r
 
 Code for training and plot generation in AstroMCAD.ipynb. Use this for plot generation and the python package for everything else.
 If you have any questions, shoot me an email at rithwikca2020@gmail.com.
-=======
-243rd AAS Meeting iPoster (summary of work): https://aas243-aas.ipostersessions.com/default.aspx?s=16-F9-A7-80-27-2E-87-DF-6A-01-E4-07-E4-A2-07-2C&guestview=true
-
-Additional Figures are in Figures/. Code for training and plot generation is in AstroMCAD.ipynb.
-
-If you have any questions, I'd love to chat at rithwikca2020@gmail.com.
-
-A python package for this methodology is planned.
->>>>>>> 73a42ef5fea8661b2d11ed3e078025f02cca82de
-
 
 # `astromcad` Package Documentation
 
