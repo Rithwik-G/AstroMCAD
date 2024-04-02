@@ -1,6 +1,7 @@
 # Multi-Class Anomaly Detection for Astronomical Transients
 
 Paper Link: https://arxiv.org/abs/2403.14742
+
 243rd AAS Meeting iPoster: https://aas243-aas.ipostersessions.com/default.aspx?s=16-F9-A7-80-27-2E-87-DF-6A-01-E4-07-E4-A2-07-2C&guestview=true
 
 PyPI Package: https://pypi.org/project/astromcad/
@@ -79,7 +80,7 @@ NOTE: If n_host is set to 0 during initalization, don't pass host galaxy informa
 In the case that you want to create your own classifer, be sure to name the input layers and latent layer something memorable. To initalize a `Custom` object with this classifier, use 
 
 ```python
-det.custom_model(model, lc_name, context_name, host_name)
+det.custom_model(model, lc_name, context_name, host_name) # Names of the respective layers
 det.create_encoder()
 ...
 ```
@@ -109,7 +110,5 @@ multi.train(x_data, labels) # labels = [Class 1, Class 3, Class 2, Class 1, ...]
 multi.score_discrete(x_data) # [0.45, -0.3, 0.2]
 multi.labels # 				   [Class 1, Class 2, Class 3]
 ```
-
-
 
 
