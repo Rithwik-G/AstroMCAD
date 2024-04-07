@@ -11,9 +11,12 @@ Additional Figures from the paper are in the Figures/ folder (fully updated to r
 Code for training and plot generation in AstroMCAD.ipynb. Use this for plot generation and the python package for everything else.
 If you have any questions, shoot me an email at rithwikca2020@gmail.com.
 
+
 # `astromcad` Package Documentation
 
 ## Overview
+
+For sample usage, see: https://colab.research.google.com/drive/1SrYVt9PAjai0NeLr4cI40Lriz_ruLhLt?usp=sharing
 
 The `astromcad` package implements the transient anomaly detection methodology presented in https://arxiv.org/abs/2403.14742 and allows anyone to train custom light curve anomaly detectors. In short, the methodology is to repurpose the penultimate layer of a neural network classifier for anomaly detection. Then, to extract anomalies from this latent space, a separate isolation forest is trained on the observations from each class, and the minimum score from any detector is used as the final anomaly score. This isolation forest approach is called `MCIF` (Multi-Class Isolation Forest).
 
@@ -85,7 +88,13 @@ det.create_encoder()
 ...
 ```
 
-To use the trained classifier, you can use `det.classify(light_curves, host_gals)`. To plot a real-time score evoluation, use `det.plot_real_time(light_curve)`
+To use the trained classifier, you can use `det.classify(light_curves, host_gals)`. To plot a real-time score evoluation, use
+
+```python
+det.plot_real_time(lc, unique_passbands, time, flux, flux_error, host_gal, names=['g', 'r'], colors=['g', 'r'])
+```
+
+`unique_passbands` is a list of all the unique values in the first column of lc. `time`, `flux`, and `flux_error` are the unscaled time, flux, and flux error values (likely to also be columns in lc). `names` and `colors` signify what plot label/color to be associated with each passband in `unique_passbands`.
 
 
 ### MCIF
@@ -110,5 +119,7 @@ multi.train(x_data, labels) # labels = [Class 1, Class 3, Class 2, Class 1, ...]
 multi.score_discrete(x_data) # [0.45, -0.3, 0.2]
 multi.labels # 				   [Class 1, Class 2, Class 3]
 ```
+
+
 
 
