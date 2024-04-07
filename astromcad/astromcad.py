@@ -8,21 +8,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.ensemble import IsolationForest
 import pickle
+import os
+import keras
   
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class Detect:
     ntimesteps=656
-
+    classes = []
     @classmethod
     def pad(cls, x_data):
         for ind in range(len(x_data)):
-            np.pad(x_data[ind], ((0, cls.ntimesteps - len(x_data[ind])), (0, 0)))
+            x_data[ind] = np.pad(x_data[ind], ((0, cls.ntimesteps - len(x_data[ind])), (0, 0)))
         return x_data
 
     @classmethod
     def init(cls):
-        with open("pretrained", 'rb') as f:
-            cls.mod = pickle.load(f)
+        pretrained_model = os.path.join(SCRIPT_DIR, "pretrained.keras")
+        iforests = os.path.join(SCRIPT_DIR, "iforests.pickle")
+        cls.mod = Custom(656, 4, 2, 9, 12)
+        model = keras.models.load_model(pretrained_model)
+        cls.mod.custom_model(model, 'lc', 'host', 'latent')
+        cls.mod.create_encoder()
+        cls.mod.mcif = mcif()
+        with open(iforests, 'rb') as f:
+            cls.mod.mcif.iforests = pickle.load(f)
 
         
         # cls.mod = Custom(ntimesteps, 4, 2, 9, y_train.shape[-1])
@@ -32,8 +42,8 @@ class Detect:
         # cls.mod.mcif.iforests = best.iso_forests
 
     @classmethod
-    def classify(cls, x_data, host_gal):
-        return cls.mod.classify(x_data, host_gal)
+    def predict(cls, x_data, host_gal):
+        return cls.mod.predict(x_data, host_gal)
 
     @classmethod
     def anomaly_score(cls, x_data, host_gal):
@@ -41,7 +51,7 @@ class Detect:
 
     @classmethod
     def plot_real_time(cls, x_data, host_gal):
-        cls.mod.plot_real_time(x_data, host_gal, [0.4827, 0.6223], x_data[:, 1] * 100 - 30, x_data[:, 2] * 500, x_data[:, 3] * 500, colors=['red', 'g'], names=['r', 'g'])
+        cls.mod.plot_real_time(x_data, [0.4827, 0.6223], x_data[:, 1] * 100 - 30, x_data[:, 2] * 500, x_data[:, 3] * 500, host_gal, colors=['red', 'g'], names=['r', 'g'])
     
         
     
@@ -56,7 +66,7 @@ class Custom:
 
     def pad(self, x_data):
         for ind in range(len(x_data)):
-            np.pad(x_data[ind], ((0, self.timesteps - len(x_data[ind])), (0, 0)))
+            x_data[ind]=np.pad(x_data[ind], ((0, self.timesteps - len(x_data[ind])), (0, 0)))
         return x_data
 
     def create_model(self):
@@ -98,9 +108,9 @@ class Custom:
         self.model=model
         self.lc_name = lc_name
         self.context_name = context_name
-        self.latent_name=latent_name
+        self.latent_name = latent_name
         
-    def train(self, X_train, y_train, x_val, y_val, savepath, host_gal_train = None, host_gal_val = None):
+    def train(self, X_train, y_train, X_val, y_val, host_gal_train = None, host_gal_val = None, class_weights=None):
         
         early_stopping = EarlyStopping(
                                       patience=5,
@@ -110,12 +120,12 @@ class Custom:
                                       )
         
         
-        
         if (self.contextual > 0):
             self.history = self.model.fit(x = [X_train, host_gal_train], validation_data=([X_val, host_gal_val], y_val), y = y_train, epochs=40, batch_size = 128, class_weight = class_weights, callbacks=[early_stopping])
         else:
             self.history = self.model.fit(x = [X_train], validation_data=([X_val], y_val), y = y_train, epochs=40, batch_size = 128, class_weight = class_weights, callbacks=[early_stopping])
-            
+ 
+
         
     
     def create_encoder(self):
@@ -185,12 +195,14 @@ class Custom:
         return ans
 
 
-    def plot_real_time(self, x_data, host_gal, bands, time, flux, error, names = [], colors = []):
-        cur = np.array([j[1] for j in x_data])
+    def plot_real_time(self, x_data, bands, time_, flux_, error_, host_gal=None, names = [], colors = []):
         classification_scores = self.get_anomaly_real_time([x_data], [host_gal])[0]
-        
-        cur = cur[:len(classification_scores)]
-        assert(len(cur) == len(classification_scores))
+        tot = len(classification_scores)
+        time_ = time_[:tot]
+        flux_ = flux_[:tot]
+        error_ = error_[:tot]
+
+        assert(len(classification_scores) == len(time_));
 
         time = {i : [] for i in bands}
         flux = {i : [] for i in bands}
@@ -198,12 +210,12 @@ class Custom:
 
         
     
-        for i in x_data[:len(classification_scores)]:
+        for ind, i in enumerate(x_data[:len(classification_scores)]):
             if (not np.any(i)):
                 break
-            flux[i[0]].append(i[2])
-            error[i[0]].append(i[3])
-            time[i[0]].append(i[1])
+            flux[i[0]].append(flux_[ind])
+            error[i[0]].append(error_[ind])
+            time[i[0]].append(time_[ind])
     
         fig, axs = plt.subplots(2, figsize=(10, 20))
     
@@ -219,7 +231,7 @@ class Custom:
     
         axs[1].set_ylabel('Anomaly Score', fontsize=27)
         axs[1].set_xlabel('Time Since Trigger', fontsize=27)
-        axs[1].plot(cur, classification_scores)
+        axs[1].plot(time_, classification_scores)
     
         axs[1].set_ylim(-0.3, 0.3)
         axs[1].set_yticks(ticks=np.arange(-0.3, 0.3, 0.1))
