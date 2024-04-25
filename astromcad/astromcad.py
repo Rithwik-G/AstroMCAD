@@ -104,7 +104,7 @@ class Custom:
         
         self.latent_name='latent'
         
-    def custom_model(self, model, lc_name, context_name, latent_name=None):
+    def custom_model(self, model, lc_name, latent_name, context_name=None):
         self.model=model
         self.lc_name = lc_name
         self.context_name = context_name
