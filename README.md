@@ -1,6 +1,6 @@
 # Multi-Class Anomaly Detection for Astronomical Transients
 
-See this newer repository (https://github.com/Rithwik-G/astromcad2.0) for a more cleaned version of the code used in this work. Docs from here will eventually be ported over to the other repository.
+See this newer repository (https://github.com/Rithwik-G/astromcad2.0) for a newer version of the code used in this work. Docs from here will eventually be ported over to the other repository. The python package is now built from the other repository.
 
 Paper Link: https://arxiv.org/abs/2403.14742
 
